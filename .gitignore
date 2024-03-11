@@ -1,0 +1,19 @@
+# Spring Boot specific
+/target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# IDE files
+/.idea/
+/.classpath
+/.project
+/.settings/
+/.vscode/
+
+# Log files
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
