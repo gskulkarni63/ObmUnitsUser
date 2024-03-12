@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.shantesh.obmunits.user.dto.ResponseDto;
 import com.shantesh.obmunits.user.dto.TeamDto;
@@ -61,5 +62,13 @@ public class UserController {
 	public ResponseEntity<?> deleteTeamByTeamId(@PathVariable("userId") String userId) {
 		userService.deleteUserByPersonId(userId);
 		return new ResponseEntity(ResponseDto.builder().message("The user is updated").build(), HttpStatusCode.valueOf(201));
+	}
+//	String teamName,String firstName
+	@GetMapping("/get/user/")
+	public ResponseEntity<?> findAllUsers(@RequestParam(required = false) String teamName,
+										 @RequestParam(required = false) String firstName,
+										 @RequestParam(required = false) Integer pageNumber,
+										 @RequestParam(required = false) Integer pageSize ){
+		return ResponseEntity.ok(userService.findAllUsers(teamName, firstName, pageNumber, pageSize));
 	}
 }
