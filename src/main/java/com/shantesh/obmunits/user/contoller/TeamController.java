@@ -1,5 +1,7 @@
 package com.shantesh.obmunits.user.contoller;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.http.HttpStatusCode;
@@ -26,36 +28,31 @@ public class TeamController {
 
 	private final TeamService teamService;
 
-	
-	
 	@PostMapping("/save/team")
-	public ResponseEntity<ResponseDto> saveTeam(@RequestBody TeamDto team) {
+	public ResponseEntity<String> saveTeam(@RequestBody TeamDto team) {
 		teamService.addTeam(team);
-		return new ResponseEntity<ResponseDto>(ResponseDto.builder().message("The team is created").build(),
-				HttpStatusCode.valueOf(201));
+		return new ResponseEntity<>("Team created successfully", HttpStatusCode.valueOf(201));
 	}
 
 	@GetMapping("/get/team/{teamId}")
-	public ResponseEntity<?> getTeamByTeamId(@PathVariable("teamId") String teamId) {
+	public ResponseEntity<TeamDto> getTeamByTeamId(@PathVariable("teamId") String teamId) {
 		Optional<TeamDto> teamDto = teamService.findTeamByTeamId(teamId);
-		if(teamDto.isPresent()) {
+		if (teamDto.isPresent()) {
 			return new ResponseEntity<TeamDto>(teamDto.get(), HttpStatusCode.valueOf(201));
 		}
-		return new ResponseEntity<ResponseDto>(ResponseDto.builder().message("The teamId is null").build(), HttpStatusCode.valueOf(201));
+		return new ResponseEntity<>(new TeamDto(), HttpStatusCode.valueOf(201));
 	}
 
 	@PutMapping("/update/team/{teamId}")
-	public ResponseEntity<ResponseDto> updateTeam(@PathVariable("teamId") String teamId, @RequestBody TeamDto team) {
+	public ResponseEntity<String> updateTeam(@PathVariable("teamId") String teamId, @RequestBody TeamDto team) {
 		teamService.updateTeamByTeamId(teamId, team);
-		return new ResponseEntity<ResponseDto>(ResponseDto.builder().message("The team is updated").build(),
-				HttpStatusCode.valueOf(200));
-	}
-	@DeleteMapping("/delete/team/{teamId}")
-	public ResponseEntity<ResponseDto> deleteTeam(@PathVariable("teamId") String teamId){
-		teamService.deleteTeamByTeamId(teamId);
-		return new ResponseEntity<ResponseDto>(ResponseDto.builder().message("The team is deleted").build(),
-				HttpStatusCode.valueOf(200));
+		return new ResponseEntity<String>("The team is updated", HttpStatusCode.valueOf(200));
 	}
 
-	
+	@DeleteMapping("/delete/team/{teamId}")
+	public ResponseEntity<String> deleteTeam(@PathVariable("teamId") String teamId) {
+		teamService.deleteTeamByTeamId(teamId);
+		return new ResponseEntity<String>("The team is deleted", HttpStatusCode.valueOf(200));
+	}
+
 }

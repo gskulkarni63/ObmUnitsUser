@@ -2,6 +2,8 @@ package com.shantesh.obmunits.user.contoller;
 
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -29,46 +31,49 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserController {
 	private final UserServiceImpl userService;
+	private final String API_URL = "/user";
+	private final String API_URL_ID = API_URL + "/{userId}";
 
-	@PostMapping("/save/user")
-	public ResponseEntity<ResponseDto> saveTeam(@RequestBody UserDto user) {
+	@PostMapping(API_URL)
+	public ResponseEntity<String> savePerson(@RequestBody UserDto user) {
 		userService.addUser(user);
-		return new ResponseEntity<ResponseDto>(ResponseDto.builder().message("The user is created").build(),
-				HttpStatusCode.valueOf(201));
+		return new ResponseEntity<String>("The user is created", HttpStatusCode.valueOf(201));
 	}
-	
-	@GetMapping("/get/user/{userId}")
-	public ResponseEntity<?> getTeamByTeamId(@PathVariable("userId") String userId) {
-		Optional<UserDto> userDto= userService.findUserByPersonId(userId);
-		if(userDto.isPresent()) {
+
+	@GetMapping(API_URL_ID)
+	public ResponseEntity<UserDto> getPersonByPersonId(@PathVariable("userId") String userId) {
+		Optional<UserDto> userDto = userService.findUserByPersonId(userId);
+		if (userDto.isPresent()) {
 			return new ResponseEntity<UserDto>(userDto.get(), HttpStatusCode.valueOf(201));
 		}
-		return new ResponseEntity(ResponseDto.builder().message("UserId does not exist").build(), HttpStatusCode.valueOf(201));
-	}
-	
-	@PutMapping("/put/user/{userId}")
-	public ResponseEntity<?> putTeamByTeamId(@PathVariable("userId") String userId,@RequestBody UpdateUserDto user) {
-		 userService.updateUserByPersonId(userId,user);
-		return new ResponseEntity(ResponseDto.builder().message("The user is updated").build(), HttpStatusCode.valueOf(201));
-	}
-	
-	@PatchMapping("/patch/user/{userId}")
-	public ResponseEntity<?> patchTeamByTeamId(@PathVariable("userId") String userId,@RequestBody UpdateUserDto user) {
-		userService.patchUserByPersonId(userId,user);
-		return new ResponseEntity(ResponseDto.builder().message("The user is updated").build(), HttpStatusCode.valueOf(201));
+		return new ResponseEntity<UserDto>(new UserDto(), HttpStatus.BAD_REQUEST);
 	}
 
-	@DeleteMapping("/delete/user/{userId}")
-	public ResponseEntity<?> deleteTeamByTeamId(@PathVariable("userId") String userId) {
-		userService.deleteUserByPersonId(userId);
-		return new ResponseEntity(ResponseDto.builder().message("The user is updated").build(), HttpStatusCode.valueOf(201));
+	@PutMapping(API_URL_ID)
+	public ResponseEntity<String> putPersonByPersonId(@PathVariable("userId") String userId,
+			@RequestBody UpdateUserDto user) {
+		userService.updateUserByPersonId(userId, user);
+		return new ResponseEntity<String>("The user is updated", HttpStatusCode.valueOf(201));
 	}
-//	String teamName,String firstName
-	@GetMapping("/get/user/")
-	public ResponseEntity<?> findAllUsers(@RequestParam(required = false) String teamName,
-										 @RequestParam(required = false) String firstName,
-										 @RequestParam(required = false) Integer pageNumber,
-										 @RequestParam(required = false) Integer pageSize ){
-		return ResponseEntity.ok(userService.findAllUsers(teamName, firstName, pageNumber, pageSize));
+
+	@PatchMapping(API_URL_ID)
+	public ResponseEntity<String> patchPersonByPersonId(@PathVariable("userId") String userId,
+			@RequestBody UpdateUserDto user) {
+		userService.patchUserByPersonId(userId, user);
+		return new ResponseEntity<String>("The user is updated", HttpStatusCode.valueOf(201));
+	}
+
+	@DeleteMapping(API_URL_ID)
+	public ResponseEntity<String> deletePersonByPersonId(@PathVariable("userId") String userId) {
+		userService.deleteUserByPersonId(userId);
+		return new ResponseEntity<String>("The user is updated", HttpStatusCode.valueOf(201));
+	}
+
+	@GetMapping(API_URL)
+	public ResponseEntity<Page<UserDto>> findAllPerson(@RequestParam(required = false) String teamName,
+			@RequestParam(required = false) String firstName, @RequestParam(required = false) Integer pageNumber,
+			@RequestParam(required = false) Integer pageSize) {
+//		return ResponseEntity.ok(userService.findAllUsers(teamName, firstName, pageNumber, pageSize));
+		return new ResponseEntity<Page<UserDto>>(userService.findAllUsers(teamName, firstName, pageNumber, pageSize),HttpStatus.ACCEPTED);
 	}
 }
